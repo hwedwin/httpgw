@@ -16,9 +16,9 @@ httpx:
 service:
   name: "gwproxy"
   # 服务IP,默认本机首个私有地址
-  host: "10.11.165.44"
+  httpHost: "10.11.165.44"
   # 服务端口,默认80
-  port:
+  httpPort:
   # 服务心跳检测超时. 默认5秒
   checkTimeout: "5s"
   # 服务心跳检测间隔. 默认6秒
@@ -29,13 +29,13 @@ service:
 # gwproxy代理入口
 entries:
   -
-    # 来源URI, 所有入口来源必须惟一
+    # 来源URI(必需), 所有入口来源必须惟一
     source: "/gamegw/jx3/web/get-corps-top200"
-    # 中间件服务, 具体参照common的midware
-    midware: ["VerifySign","VerifyTs"]
     # 目标服务
-    service: "jx3mine"
+    service(必需): "jx3mine"
     # 目标URI
-    target: "/jx3mine/get-corps-top200"
-    # 描述备注
+    target(必需): "/jx3mine/get-corps-top200"
+    # 中间件服务(可选), 具体参照common的midware
+    plugins: ["VerifySign","VerifyTs"]
+    # 描述备注(可选)
     remark: "这是一个测试案例"
