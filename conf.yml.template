@@ -16,16 +16,16 @@ httpx:
 service:
   name: "gwproxy"
   # 服务IP,默认本机首个私有地址
-  httpHost: "10.11.165.44"
+  proxyHost: "10.11.165.44"
   # 服务端口,默认80
-  httpPort:
+  proxyPort:
   # 如果启用https
-  certFile:
-  keyFile:
+  proxyCertFile:
+  proxyKeyFile:
   # 服务心跳检测超时. 默认5秒
-  checkTimeout: "5s"
+  proxyCheckTimeout: "5s"
   # 服务心跳检测间隔. 默认6秒
-  checkInterval: "6s"
+  proxyCheckInterval: "6s"
   # consul代理地址. 默认127.0.0.1:8500
   # 形式1, 指定代理地址
   # center: "127.0.0.1:8500"
