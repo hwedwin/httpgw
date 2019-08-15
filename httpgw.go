@@ -11,6 +11,7 @@ type Entry struct {
 	Target  string   // 目标URI(必需)
 	Plugins []string // 服务插件(可选)
 	Remark  string   // 备注描述(可选)
+	Https   bool     // 是否使用tls
 }
 
 type Config struct {
@@ -27,5 +28,9 @@ func Plugin(name string, f http.HandlerFunc) {
 }
 
 func ListenAndServe() error {
+	return nil
+}
+
+func ListenAndServeTLS() error {
 	return nil
 }

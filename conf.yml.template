@@ -39,3 +39,5 @@ entries:
     plugins: ["VerifySign","VerifyTs"]
     # 描述备注(可选)
     remark: "这是一个测试案例"
+    # 是否使用https
+    https: false
