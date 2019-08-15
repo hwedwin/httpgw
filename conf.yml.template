@@ -1,0 +1,41 @@
+# Http的Transport及Client设置
+httpx:
+   transport:
+     dialerTimeout: "30s"
+     dialerKeepAlive: "30s"
+     maxIdleConns: 10240
+     idleConnTimeout: "90s"
+     tlsHandshakeTimeout: "10s"
+     expectContinueTimeout: "1s"
+     maxIdleConnsPerHost: 2048
+     responseHeaderTimeout: "5s"
+   client:
+     timeout: "60s"
+
+# gwproxy代理设置
+service:
+  name: "gwproxy"
+  # 服务IP,默认本机首个私有地址
+  host: "10.11.165.44"
+  # 服务端口,默认80
+  port:
+  # 服务心跳检测超时. 默认5秒
+  checkTimeout: "5s"
+  # 服务心跳检测间隔. 默认6秒
+  checkInterval: "6s"
+  # consul代理地址. 默认127.0.0.1:8500
+  center: "10.11.165.44:18500"
+
+# gwproxy代理入口
+entries:
+  -
+    # 来源URI, 所有入口来源必须惟一
+    source: "/gamegw/jx3/web/get-corps-top200"
+    # 中间件服务, 具体参照common的midware
+    midware: ["VerifySign","VerifyTs"]
+    # 目标服务
+    service: "jx3mine"
+    # 目标URI
+    target: "/jx3mine/get-corps-top200"
+    # 描述备注
+    remark: "这是一个测试案例"
