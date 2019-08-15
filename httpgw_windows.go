@@ -14,7 +14,7 @@ func graceListenTCP(addr string) (net.Listener, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tcpKeepAliveListener{TCPListener: tln.(*net.TCPListener)}, nil
+	return &tcpKeepAliveListener{TCPListener: tln.(*net.TCPListener)}, nil
 }
 
 func graceShutdownOrRestart(httpServer *http.Server, httpListener net.Listener) {

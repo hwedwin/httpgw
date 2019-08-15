@@ -75,7 +75,7 @@ func ListenAndServe() error {
 		}
 	}
 
-	addr := net.JoinHostPort(config.HttpHost, strconv.Itoa(config.HttpPort))
+	addr := net.JoinHostPort(config.ProxyHost, strconv.Itoa(config.ProxyPort))
 	server := &http.Server{
 		Addr:    addr,
 		Handler: mux,
@@ -87,9 +87,9 @@ func ListenAndServe() error {
 	}
 	defer listner.Close()
 
-	if config.CertFile != "" {
+	if config.ProxyCertFile != "" {
 		go func() {
-			if err = server.ServeTLS(listner, config.CertFile, config.KeyFile); err != nil {
+			if err = server.ServeTLS(listner, config.ProxyCertFile, config.ProxyKeyFile); err != nil {
 				log.Error(nil, "server.ServeTLS error: %v", err)
 			}
 		}()
