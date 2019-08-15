@@ -20,7 +20,7 @@ func Plugin(name string, f http.HandlerFunc) error {
 	return nil
 }
 
-func ListenAndServe() error {
+func Serve() error {
 	config, err := LoadConfig()
 	if err != nil {
 		return err
