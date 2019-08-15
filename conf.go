@@ -30,11 +30,11 @@ const CKEY = "service"
 
 var ErrConfigNotFound = errors.New("missing map config: service")
 
-func LoadConfig() (*Config, error) {
+func LoadConfig() (*Config) {
 	var config *Config
 	ok := conf.Scan(CKEY, &config)
 	if !ok {
-		return nil, ErrConfigNotFound
+		return nil
 	}
-	return config, nil
+	return config
 }

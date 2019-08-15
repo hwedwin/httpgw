@@ -21,10 +21,14 @@ func Plugin(name string, f http.HandlerFunc) error {
 }
 
 func Serve() error {
-	config, err := LoadConfig()
-	if err != nil {
-		return err
+	config := LoadConfig()
+	if config == nil || config.ProxyPort == 0 {
+		return nil
 	}
+	return ServeWith(config)
+}
+
+func ServeWith(config *Config) error {
 
 	mux := http.NewServeMux()
 	for _, entry := range config.Entries {
