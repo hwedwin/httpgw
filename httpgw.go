@@ -31,6 +31,6 @@ func ListenAndServe() error {
 	return nil
 }
 
-func ListenAndServeTLS() error {
+func ListenAndServeTLS(certFile, keyFile string) error {
 	return nil
 }
