@@ -38,3 +38,7 @@ func LoadConfig() (*Config) {
 	}
 	return config
 }
+
+func mergeConfig(config *Config) *Config {
+	return config
+}

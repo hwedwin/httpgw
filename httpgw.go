@@ -21,14 +21,15 @@ func Plugin(name string, f http.HandlerFunc) error {
 }
 
 func Serve() error {
-	config := LoadConfig()
-	if config == nil || config.ProxyPort == 0 {
-		return nil
-	}
-	return ServeWith(config)
+	return ServeWith(LoadConfig())
 }
 
 func ServeWith(config *Config) error {
+
+	config = mergeConfig(config)
+	if config.ProxyPort == 0 {
+		return nil
+	}
 
 	mux := http.NewServeMux()
 	for _, entry := range config.Entries {
