@@ -19,12 +19,25 @@ service:
   httpHost: "10.11.165.44"
   # 服务端口,默认80
   httpPort:
+  # 如果启用https
+  certFile:
+  keyFile:
   # 服务心跳检测超时. 默认5秒
   checkTimeout: "5s"
   # 服务心跳检测间隔. 默认6秒
   checkInterval: "6s"
   # consul代理地址. 默认127.0.0.1:8500
-  center: "10.11.165.44:18500"
+  # 形式1, 指定代理地址
+  # center: "127.0.0.1:8500"
+  # 形式2, 指定代理地址与缓存超时
+  center:
+    # 代理地址
+    address: "10.11.165.44:18500"
+    # 缓存超时
+    expired: 60
+  # 形式3, 指定静态代理,一般用于本地测试
+  # center:
+  #   configs: {"abc":["1.2.3.4:8000"]}
 
 # gwproxy代理入口
 entries:

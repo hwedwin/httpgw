@@ -1,36 +1,107 @@
 package gwproxy
 
 import (
+	"errors"
+	"github.com/obase/center/httpx"
+	"github.com/obase/log"
+	"net"
 	"net/http"
-	"time"
+	"strconv"
 )
 
-type Entry struct {
-	Source  string   // 来源URI(必需且惟一)
-	Service string   // 目标服务(必需)
-	Target  string   // 目标URI(必需)
-	Plugins []string // 服务插件(可选)
-	Remark  string   // 备注描述(可选)
-	Https   bool     // 是否使用tls
-}
+var plugins map[string]http.HandlerFunc = make(map[string]http.HandlerFunc)
 
-type Config struct {
-	Name          string        // 注册服务名,如果没有则不注册
-	CheckTimeout  time.Duration // 注册服务心跳检测超时
-	CheckInterval time.Duration // 注册服务心跳检测间隔
-	HttpHost      string        // Http暴露主机,默认首个私有IP
-	HttpPort      int           // Http暴露端口, 默认80
-	Entries       []*Entry      // 代理入口配置
-}
-
-func Plugin(name string, f http.HandlerFunc) {
-
-}
-
-func ListenAndServe() error {
+// Note: this method is not thread-safe
+func Plugin(name string, f http.HandlerFunc) error {
+	if _, ok := plugins[name]; ok {
+		return errors.New("duplicate plugin: " + name)
+	}
+	plugins[name] = f
 	return nil
 }
 
-func ListenAndServeTLS(certFile, keyFile string) error {
+func ListenAndServe() error {
+	config, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	mux := http.NewServeMux()
+	for _, entry := range config.Entries {
+		if len(entry.Plugins) > 0 {
+			var chain []http.HandlerFunc
+			for _, pname := range entry.Plugins {
+				if plugin, ok := plugins[pname]; !ok {
+					return errors.New("missing plugin: " + pname)
+				} else {
+					chain = append(chain, plugin)
+				}
+			}
+			if entry.Https {
+				// 启用TLS
+				mux.HandleFunc("", func(writer http.ResponseWriter, request *http.Request) {
+					// 1. 执行middle ware插件
+					for _, plugin := range chain {
+						plugin(writer, request)
+						if IsAbort(request) {
+							return // 如果中止立即返回
+						}
+					}
+					// 2. 执行转发
+					httpx.ProxyHandlerTLS(entry.Service, entry.Target).ServeHTTP(writer, request)
+				})
+			} else {
+				// 不启用TLS
+				mux.HandleFunc("", func(writer http.ResponseWriter, request *http.Request) {
+					// 1. 执行middle ware插件
+					for _, plugin := range chain {
+						plugin(writer, request)
+						if IsAbort(request) {
+							return // 如果中止立即返回
+						}
+					}
+					// 2. 执行转发
+					httpx.ProxyHandler(entry.Service, entry.Target).ServeHTTP(writer, request)
+				})
+			}
+		} else {
+			if entry.Https {
+				// 启用TLS
+				mux.Handle(entry.Source, httpx.ProxyHandlerTLS(entry.Service, entry.Target))
+			} else {
+				// 不启用TLS
+				mux.Handle(entry.Source, httpx.ProxyHandler(entry.Service, entry.Target))
+			}
+		}
+	}
+
+	addr := net.JoinHostPort(config.HttpHost, strconv.Itoa(config.HttpPort))
+	server := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+	}
+
+	listner, err := graceListenTCP(addr)
+	if err != nil {
+		return err
+	}
+	defer listner.Close()
+
+	if config.CertFile != "" {
+		go func() {
+			if err = server.ServeTLS(listner, config.CertFile, config.KeyFile); err != nil {
+				log.Error(nil, "server.ServeTLS error: %v", err)
+			}
+		}()
+	} else {
+		go func() {
+			if err = server.Serve(listner); err != nil {
+				log.Error(nil, "server.Serve error: %v", err)
+			}
+		}()
+	}
+
+	// 等待中止信号
+	graceShutdownOrRestart(server, listner)
 	return nil
 }
