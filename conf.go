@@ -15,19 +15,21 @@ type Entry struct {
 }
 
 type Config struct {
-	Name               string   `json:"name" bson:"name" yaml:"name"`                                           // 注册服务名,如果没有则不注册
-	ProxyCheckTimeout  string   `json:"proxyCheckTimeout" bson:"proxyCheckTimeout" yaml:"proxyCheckTimeout"`    // 注册服务心跳检测超时
-	ProxyCheckInterval string   `json:"proxyCheckInterval" bson:"proxyCheckInterval" yaml:"proxyCheckInterval"` // 注册服务心跳检测间隔
-	ProxyHost          string   `json:"proxyHost" bson:"proxyHost" yaml:"proxyHost"`                            // Http暴露主机,默认首个私有IP
-	ProxyPort          int      `json:"proxyPort" bson:"proxyPort" yaml:"proxyPort"`                            // Http暴露端口, 默认80
-	ProxyCertFile      string   `json:"proxyCertFile" bson:"proxyCertFile" yaml:"proxyCertFile"`                // 启用TLS
-	ProxyKeyFile       string   `json:"proxyKeyFile" bson:"proxyKeyFile" yaml:"proxyKeyFile"`                   // 启用TLS
-	Entries            []*Entry `json:"entries" json:"entries" yaml:"entries"`                                  // 代理入口配置
+	Name              string   `json:"name" bson:"name" yaml:"name"`                                           // 注册服务名,如果没有则不注册
+	HttpCheckTimeout  string   `json:"proxyCheckTimeout" bson:"proxyCheckTimeout" yaml:"proxyCheckTimeout"`    // 注册服务心跳检测超时
+	HttpCheckInterval string   `json:"proxyCheckInterval" bson:"proxyCheckInterval" yaml:"proxyCheckInterval"` // 注册服务心跳检测间隔
+	HttpHost          string   `json:"proxyHost" bson:"proxyHost" yaml:"proxyHost"`                            // Http暴露主机,默认首个私有IP
+	HttpPort          int      `json:"proxyPort" bson:"proxyPort" yaml:"proxyPort"`                            // Http暴露端口, 默认80
+	HttpCertFile      string   `json:"proxyCertFile" bson:"proxyCertFile" yaml:"proxyCertFile"`                // 启用TLS
+	HttpKeyFile       string   `json:"proxyKeyFile" bson:"proxyKeyFile" yaml:"proxyKeyFile"`                   // 启用TLS
+	Entries           []*Entry `json:"entries" json:"entries" yaml:"entries"`                                  // 代理入口配置
 }
 
-const CKEY = "service"
+const (
+	CKEY = "httpgw"
+)
 
-var ErrConfigNotFound = errors.New("missing map config: service")
+var ErrConfigNotFound = errors.New("missing map config: httpgw")
 
 func LoadConfig() (*Config) {
 	var config *Config
@@ -44,14 +46,14 @@ func mergeConfig(conf *Config) *Config {
 	}
 
 	// 补充默认逻辑
-	if conf.ProxyHost == "" {
-		conf.ProxyHost = PrivateAddress
+	if conf.HttpHost == "" {
+		conf.HttpHost = PrivateAddress
 	}
-	if conf.ProxyCheckTimeout == "" {
-		conf.ProxyCheckTimeout = "5s"
+	if conf.HttpCheckTimeout == "" {
+		conf.HttpCheckTimeout = "5s"
 	}
-	if conf.ProxyCheckInterval == "" {
-		conf.ProxyCheckInterval = "6s"
+	if conf.HttpCheckInterval == "" {
+		conf.HttpCheckInterval = "6s"
 	}
 	return conf
 }

@@ -19,26 +19,26 @@ func registerServiceProxy(mux *http.ServeMux, conf *Config) {
 	defer log.Flush()
 	mux.HandleFunc("/health", CheckHttpHealth)
 
-	suffix := "@" + conf.ProxyHost + ":" + strconv.Itoa(conf.ProxyPort)
+	suffix := "@" + conf.HttpHost + ":" + strconv.Itoa(conf.HttpPort)
 	myname := center.ProxyName(conf.Name)
 	regs := &center.Service{
 		Id:   myname + suffix,
-		Kind: "proxy",
+		Kind: "gw",
 		Name: myname,
-		Host: conf.ProxyHost,
-		Port: conf.ProxyPort,
+		Host: conf.HttpHost,
+		Port: conf.HttpPort,
 	}
 
 	chks := &center.Check{
 		Type:     "http",
-		Target:   fmt.Sprintf("http://%s:%v/health", conf.ProxyHost, conf.ProxyPort),
-		Timeout:  conf.ProxyCheckTimeout,
-		Interval: conf.ProxyCheckInterval,
+		Target:   fmt.Sprintf("http://%s:%v/health", conf.HttpHost, conf.HttpPort),
+		Timeout:  conf.HttpCheckTimeout,
+		Interval: conf.HttpCheckInterval,
 	}
 
 	if err := center.Register(regs, chks); err == nil {
-		log.Info(nil, "register service success, %v", *regs)
+		log.Info(nil, "register httpgw success, %v", *regs)
 	} else {
-		log.Error(nil, "register service error, %v, %v", *regs, err)
+		log.Error(nil, "register httpgw error, %v, %v", *regs, err)
 	}
 }

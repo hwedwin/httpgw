@@ -27,7 +27,7 @@ func Serve() error {
 func ServeWith(config *Config) error {
 
 	config = mergeConfig(config)
-	if config.ProxyPort == 0 {
+	if config.HttpPort == 0 {
 		return nil
 	}
 
@@ -85,7 +85,7 @@ func ServeWith(config *Config) error {
 		}
 	}
 
-	addr := net.JoinHostPort(config.ProxyHost, strconv.Itoa(config.ProxyPort))
+	addr := net.JoinHostPort(config.HttpHost, strconv.Itoa(config.HttpPort))
 	server := &http.Server{
 		Addr:    addr,
 		Handler: mux,
@@ -97,9 +97,9 @@ func ServeWith(config *Config) error {
 	}
 	defer listner.Close()
 
-	if config.ProxyCertFile != "" {
+	if config.HttpCertFile != "" {
 		go func() {
-			if err = server.ServeTLS(listner, config.ProxyCertFile, config.ProxyKeyFile); err != nil {
+			if err = server.ServeTLS(listner, config.HttpCertFile, config.HttpKeyFile); err != nil {
 				log.Error(nil, "server.ServeTLS error: %v", err)
 			}
 		}()
