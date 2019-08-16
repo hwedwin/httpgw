@@ -18,6 +18,7 @@ const (
 // go away.
 type tcpKeepAliveListener struct {
 	*net.TCPListener
+	KeepAlivePeriod time.Duration
 }
 
 func (ln tcpKeepAliveListener) Accept() (net.Conn, error) {
@@ -26,7 +27,11 @@ func (ln tcpKeepAliveListener) Accept() (net.Conn, error) {
 		return nil, err
 	}
 	tc.SetKeepAlive(true)
-	tc.SetKeepAlivePeriod(3 * time.Minute)
+	if ln.KeepAlivePeriod == 0 {
+		tc.SetKeepAlivePeriod(3 * time.Minute)
+	} else {
+		tc.SetKeepAlivePeriod(ln.KeepAlivePeriod)
+	}
 	return tc, nil
 }
 

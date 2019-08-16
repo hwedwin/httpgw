@@ -3,6 +3,7 @@ package httpgw
 import (
 	"errors"
 	"github.com/obase/conf"
+	"time"
 )
 
 type Entry struct {
@@ -15,14 +16,15 @@ type Entry struct {
 }
 
 type Config struct {
-	Name              string   `json:"name" bson:"name" yaml:"name"`                                        // 注册服务名,如果没有则不注册
-	HttpCheckTimeout  string   `json:"httpCheckTimeout" bson:"httpCheckTimeout" yaml:"httpCheckTimeout"`    // 注册服务心跳检测超时
-	HttpCheckInterval string   `json:"httpCheckInterval" bson:"httpCheckInterval" yaml:"httpCheckInterval"` // 注册服务心跳检测间隔
-	HttpHost          string   `json:"httpHost" bson:"httpHost" yaml:"httpHost"`                            // Http暴露主机,默认首个私有IP
-	HttpPort          int      `json:"httpPort" bson:"httpPort" yaml:"httpPort"`                            // Http暴露端口, 默认80
-	HttpCertFile      string   `json:"httpCertFile" bson:"httpCertFile" yaml:"httpCertFile"`                // 启用TLS
-	HttpKeyFile       string   `json:"httpKeyFile" bson:"httpKeyFile" yaml:"httpKeyFile"`                   // 启用TLS
-	Entries           []*Entry `json:"entries" json:"entries" yaml:"entries"`                               // 代理入口配置
+	Name              string        `json:"name" bson:"name" yaml:"name"`                                        // 注册服务名,如果没有则不注册
+	HttpCheckTimeout  string        `json:"httpCheckTimeout" bson:"httpCheckTimeout" yaml:"httpCheckTimeout"`    // 注册服务心跳检测超时
+	HttpCheckInterval string        `json:"httpCheckInterval" bson:"httpCheckInterval" yaml:"httpCheckInterval"` // 注册服务心跳检测间隔
+	HttpHost          string        `json:"httpHost" bson:"httpHost" yaml:"httpHost"`                            // Http暴露主机,默认首个私有IP
+	HttpPort          int           `json:"httpPort" bson:"httpPort" yaml:"httpPort"`                            // Http暴露端口, 默认80
+	HttpKeepAlive     time.Duration `json:"httpKeepAlive" bson:"httpKeepAlive" yaml:"httpKeepAlive"`
+	HttpCertFile      string        `json:"httpCertFile" bson:"httpCertFile" yaml:"httpCertFile"` // 启用TLS
+	HttpKeyFile       string        `json:"httpKeyFile" bson:"httpKeyFile" yaml:"httpKeyFile"`    // 启用TLS
+	Entries           []*Entry      `json:"entries" json:"entries" yaml:"entries"`                // 代理入口配置
 }
 
 const (

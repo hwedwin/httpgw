@@ -4,9 +4,7 @@ import (
 	"errors"
 	"github.com/obase/center/httpx"
 	"github.com/obase/log"
-	"net"
 	"net/http"
-	"strconv"
 )
 
 var plugins map[string]http.HandlerFunc = make(map[string]http.HandlerFunc)
@@ -32,10 +30,6 @@ func ServeWith(config *Config) error {
 	}
 
 	mux := http.NewServeMux()
-
-	if config.Name != "" {
-		registerServiceProxy(mux, config)
-	}
 
 	for _, entry := range config.Entries {
 		if len(entry.Plugins) > 0 {
@@ -85,13 +79,14 @@ func ServeWith(config *Config) error {
 		}
 	}
 
-	addr := net.JoinHostPort(config.HttpHost, strconv.Itoa(config.HttpPort))
+	if config.Name != "" {
+		registerServiceProxy(mux, config)
+	}
 	server := &http.Server{
-		Addr:    addr,
 		Handler: mux,
 	}
 
-	listner, err := graceListenTCP(addr)
+	listner, err := graceListenHttp(config.HttpHost, config.HttpPort, config.HttpKeepAlive)
 	if err != nil {
 		return err
 	}

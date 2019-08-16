@@ -6,15 +6,17 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
+	"time"
 )
 
-func graceListenTCP(addr string) (net.Listener, error) {
-	tln, err := net.Listen("tcp", addr)
+func graceListenHttp(host string, port int, keepAlivePeriod time.Duration) (net.Listener, error) {
+	tln, err := net.Listen("tcp", host+":"+strconv.Itoa(port))
 	if err != nil {
 		return nil, err
 	}
-	return &tcpKeepAliveListener{TCPListener: tln.(*net.TCPListener)}, nil
+	return &tcpKeepAliveListener{TCPListener: tln.(*net.TCPListener), KeepAlivePeriod: keepAlivePeriod}, nil
 }
 
 func graceShutdownOrRestart(httpServer *http.Server, httpListener net.Listener) {
