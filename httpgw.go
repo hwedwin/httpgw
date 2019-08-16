@@ -32,6 +32,11 @@ func ServeWith(config *Config) error {
 	}
 
 	mux := http.NewServeMux()
+
+	if config.Name != "" {
+		registerServiceProxy(mux, config)
+	}
+
 	for _, entry := range config.Entries {
 		if len(entry.Plugins) > 0 {
 			var chain []http.HandlerFunc
