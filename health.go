@@ -1,4 +1,4 @@
-package gwproxy
+package httpgw
 
 import (
 	"fmt"
