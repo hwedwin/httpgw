@@ -11,7 +11,7 @@ import (
 
 var flag = os.Getenv(GRACE_ENV)
 
-func graceListenTCP(addr string) (net.Listener, error) {
+func graceListenHttp(host string, port int, keepAlivePeriod time.Duration) (net.Listener, error) {
 	if flag != "" {
 		file := os.NewFile(3, "")
 		defer file.Close()
@@ -20,11 +20,11 @@ func graceListenTCP(addr string) (net.Listener, error) {
 		}
 		return grpcListner, err
 	}
-	tln, err := net.Listen("tcp", addr)
+	tln, err := net.Listen("tcp", host+":"+strconv.Itoa(port))
 	if err != nil {
 		return nil, err
 	}
-	return &tcpKeepAliveListener{TCPListener: tln.(*net.TCPListener)}, nil
+	return &tcpKeepAliveListener{TCPListener: tln.(*net.TCPListener), KeepAlivePeriod: keepAlivePeriod}, nil
 }
 
 func graceShutdownOrRestart(httpServer *http.Server, httpListener net.Listener) {

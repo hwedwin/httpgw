@@ -19,24 +19,23 @@ func registerServiceProxy(mux *http.ServeMux, conf *Config) {
 	defer log.Flush()
 	mux.HandleFunc("/health", CheckHttpHealth)
 
-	shost := conf.HttpHost
-	sport := strconv.Itoa(conf.HttpPort)
-	if shost == "" {
-		shost = PrivateAddress
+	realHttpHost := conf.HttpHost
+	if realHttpHost == "" {
+		realHttpHost = PrivateAddress
 	}
 
-	suffix := "@" + shost + ":" + sport
-	myname := center.ProxyName(conf.Name)
+	suffix := "@" + realHttpHost + ":" + strconv.Itoa(conf.HttpPort)
+	myname := center.HttpName(conf.Name)
 	regs := &center.Service{
 		Id:   myname + suffix,
-		Kind: "gw",
+		Kind: "httpgw",
 		Name: myname,
-		Host: shost,
+		Host: realHttpHost,
 		Port: conf.HttpPort,
 	}
 	chks := &center.Check{
 		Type:     "http",
-		Target:   fmt.Sprintf("http://%s:%v/health", shost, sport),
+		Target:   fmt.Sprintf("http://%s:%v/health", realHttpHost, conf.HttpPort),
 		Timeout:  conf.HttpCheckTimeout,
 		Interval: conf.HttpCheckInterval,
 	}

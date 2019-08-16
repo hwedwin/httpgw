@@ -19,17 +19,17 @@ go mod edit -require=github.com/obase/httpgw@latest
 ```
 # Http的Transport及Client设置
 httpx:
-  transport:
-    dialerTimeout: "30s"
-    dialerKeepAlive: "30s"
-    maxIdleConns: 10240
-    idleConnTimeout: "90s"
-    tlsHandshakeTimeout: "10s"
-    expectContinueTimeout: "1s"
-    maxIdleConnsPerHost: 2048
-    responseHeaderTimeout: "5s"
-  client:
-    timeout: "60s"
+   transport:
+     dialerTimeout: "30s"
+     dialerKeepAlive: "30s"
+     maxIdleConns: 10240
+     idleConnTimeout: "90s"
+     tlsHandshakeTimeout: "10s"
+     expectContinueTimeout: "1s"
+     maxIdleConnsPerHost: 2048
+     responseHeaderTimeout: "5s"
+   client:
+     timeout: "60s"
 
 # 服务注册中心
 center:
@@ -42,9 +42,9 @@ center:
 httpgw:
   name: "testgw"
   # 服务IP,默认本机首个私有地址
-  httpHost: "10.11.165.44"
+  httpHost: "10.11.165.127"
   # 服务端口,默认80
-  httpPort:
+  httpPort: 80
   # 如果启用https
   httpCertFile:
   httpKeyFile:
@@ -54,7 +54,7 @@ httpgw:
   httpCheckInterval: "6s"
   # gwproxy代理入口
   entries:
-    - {source:"/gw/mul", service:"target", target:"/mul", plugins:["demo"], https: false, remark:"测试用例"}
+    - {source: "/gw/mul", service: "target", target: "/mul", plugins: ["demo"], https: false, remark: "测试用例"}
 
 ```
 

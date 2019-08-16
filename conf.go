@@ -25,6 +25,7 @@ type Config struct {
 	HttpCertFile      string        `json:"httpCertFile" bson:"httpCertFile" yaml:"httpCertFile"` // 启用TLS
 	HttpKeyFile       string        `json:"httpKeyFile" bson:"httpKeyFile" yaml:"httpKeyFile"`    // 启用TLS
 	Entries           []*Entry      `json:"entries" json:"entries" yaml:"entries"`                // 代理入口配置
+
 }
 
 const (
@@ -48,9 +49,6 @@ func mergeConfig(conf *Config) *Config {
 	}
 
 	// 补充默认逻辑
-	if conf.HttpHost == "" {
-		conf.HttpHost = PrivateAddress
-	}
 	if conf.HttpCheckTimeout == "" {
 		conf.HttpCheckTimeout = "5s"
 	}
