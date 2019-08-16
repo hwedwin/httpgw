@@ -43,7 +43,7 @@ func ServeWith(config *Config) error {
 			}
 			if entry.Https {
 				// 启用TLS
-				mux.HandleFunc("", func(writer http.ResponseWriter, request *http.Request) {
+				mux.HandleFunc(entry.Source, func(writer http.ResponseWriter, request *http.Request) {
 					// 1. 执行middle ware插件
 					for _, plugin := range chain {
 						plugin(writer, request)
@@ -56,7 +56,7 @@ func ServeWith(config *Config) error {
 				})
 			} else {
 				// 不启用TLS
-				mux.HandleFunc("", func(writer http.ResponseWriter, request *http.Request) {
+				mux.HandleFunc(entry.Source, func(writer http.ResponseWriter, request *http.Request) {
 					// 1. 执行middle ware插件
 					for _, plugin := range chain {
 						plugin(writer, request)
