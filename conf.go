@@ -6,23 +6,23 @@ import (
 )
 
 type Entry struct {
-	Source  string   // 来源URI(必需且惟一)
-	Service string   // 目标服务(必需)
-	Target  string   // 目标URI(必需)
-	Plugins []string // 服务插件(可选)
-	Remark  string   // 备注描述(可选)
-	Https   bool     // 是否使用tls
+	Source  string   `json:"source" bson:"source" yaml:"source"`    // 来源URI(必需且惟一)
+	Service string   `json:"service" bson:"service" yaml:"service"` // 目标服务(必需)
+	Target  string   `json:"target" bson:"target" yaml:"target"`    // 目标URI(必需)
+	Plugins []string `json:"plugins" bson:"plugins" yaml:"plugins"` // 服务插件(可选)
+	Remark  string   `json:"remark" bson:"remark" yaml:"remark"`    // 备注描述(可选)
+	Https   bool     `json:"https" bson:"https" yaml:"https"`       // 是否使用tls
 }
 
 type Config struct {
-	Name              string   `json:"name" bson:"name" yaml:"name"`                                           // 注册服务名,如果没有则不注册
-	HttpCheckTimeout  string   `json:"proxyCheckTimeout" bson:"proxyCheckTimeout" yaml:"proxyCheckTimeout"`    // 注册服务心跳检测超时
-	HttpCheckInterval string   `json:"proxyCheckInterval" bson:"proxyCheckInterval" yaml:"proxyCheckInterval"` // 注册服务心跳检测间隔
-	HttpHost          string   `json:"proxyHost" bson:"proxyHost" yaml:"proxyHost"`                            // Http暴露主机,默认首个私有IP
-	HttpPort          int      `json:"proxyPort" bson:"proxyPort" yaml:"proxyPort"`                            // Http暴露端口, 默认80
-	HttpCertFile      string   `json:"proxyCertFile" bson:"proxyCertFile" yaml:"proxyCertFile"`                // 启用TLS
-	HttpKeyFile       string   `json:"proxyKeyFile" bson:"proxyKeyFile" yaml:"proxyKeyFile"`                   // 启用TLS
-	Entries           []*Entry `json:"entries" json:"entries" yaml:"entries"`                                  // 代理入口配置
+	Name              string   `json:"name" bson:"name" yaml:"name"`                                        // 注册服务名,如果没有则不注册
+	HttpCheckTimeout  string   `json:"httpCheckTimeout" bson:"httpCheckTimeout" yaml:"httpCheckTimeout"`    // 注册服务心跳检测超时
+	HttpCheckInterval string   `json:"httpCheckInterval" bson:"httpCheckInterval" yaml:"httpCheckInterval"` // 注册服务心跳检测间隔
+	HttpHost          string   `json:"httpHost" bson:"httpHost" yaml:"httpHost"`                            // Http暴露主机,默认首个私有IP
+	HttpPort          int      `json:"httpPort" bson:"httpPort" yaml:"httpPort"`                            // Http暴露端口, 默认80
+	HttpCertFile      string   `json:"httpCertFile" bson:"httpCertFile" yaml:"httpCertFile"`                // 启用TLS
+	HttpKeyFile       string   `json:"httpKeyFile" bson:"httpKeyFile" yaml:"httpKeyFile"`                   // 启用TLS
+	Entries           []*Entry `json:"entries" json:"entries" yaml:"entries"`                               // 代理入口配置
 }
 
 const (
